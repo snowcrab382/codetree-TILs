@@ -2,20 +2,7 @@
 n, m = map(int, input().split())
 graph = [list(map(int, input().split())) for _ in range(n)]
 
-tmp = [[0] * 4 for _ in range(4)]
-MAX = 0
-for i in range(n - 3):
-    for j in range(m - 3):
-        cnt = 0
-        for a in range(i, i + 4):
-            for b in range(j, j + 4):
-                tmp[a - i][b - j] = graph[a][b]
-                cnt += graph[a][b]
-        if cnt > MAX:
-            reduced = tmp
-
-result = 0
-
+# 4 X 4 범위 내에서 최대값 구하기
 def check():
     global result
     # 길이가 4인 직선 체크 
@@ -35,9 +22,25 @@ def check():
                 tmp_blocks_sum = min(tmp_blocks_sum, blocks[x] + blocks[y])
             result = max(result, sum(blocks) - tmp_blocks_sum)
 
+# 2차원 배열 90도 회전
 def rotate(graph):
     return list(map(list, zip(*graph[::-1])))
 
+# 4 X 4로 탐색범위 좁히기
+reduced = [[0] * 4 for _ in range(4)]
+tmp = [[0] * 4 for _ in range(4)]
+MAX = 0
+for i in range(n - 3):
+    for j in range(m - 3):
+        cnt = 0
+        for a in range(i, i + 4):
+            for b in range(j, j + 4):
+                tmp[a - i][b - j] = graph[a][b]
+                cnt += graph[a][b]
+        if cnt > MAX:
+            reduced = tmp
+
+result = 0
 check()
 reduced = rotate(reduced)
 check()    
