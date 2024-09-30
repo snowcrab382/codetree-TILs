@@ -1,37 +1,33 @@
+import sys
+MAX_NUM = sys.maxsize
+
 # input
 n = int(input())
 graph = [list(map(int,input().split())) for _ in range(n)]
 
 # solution
-arr = [i for i in range(n)]
-half = n // 2
+def calc():
+    sum_morning = sum([graph[i][j] for i in range(n) for j in range(n) if not evening[i] and not evening[j]])
+    sum_evening = sum([graph[i][j] for i in range(n) for j in range(n) if evening[i] and evening[j]])
+    return abs(sum_morning - sum_evening)
 
-def check(arr_a, arr_b):
-    cal_a, cal_b = 0, 0
-    for i in arr_a:
-        for j in arr_a:
-            cal_a += graph[i][j]
-    
-    for i in arr_b:
-        for j in arr_b:
-            cal_b += graph[i][j]
+def find_min(curr_idx, cnt):
+    global answer
 
-    return abs(cal_a - cal_b)
-
-def combinations(half, new_arr, c):
-    global result
-
-    if len(new_arr) == half:
-        remain_arr = []
-        for i in range(n):
-            if i not in new_arr:
-                remain_arr.append(i)
-        result = min(result, check(new_arr, remain_arr))
+    if cnt == n // 2:
+        answer = min(answer, calc())
         return
     
-    for i in range(c, len(arr)):
-        combinations(half, new_arr + [arr[i]], i + 1)
+    if curr_idx == n:
+        return
+    
+    find_min(curr_idx + 1, cnt)
 
-result = 9999999999
-combinations(half, [], 0)
-print(result)
+    evening[curr_idx] = True
+    find_min(curr_idx + 1, cnt + 1)
+    evening[curr_idx] = False
+
+evening = [False] * n
+answer = MAX_NUM
+find_min(0, 0)
+print(answer)
