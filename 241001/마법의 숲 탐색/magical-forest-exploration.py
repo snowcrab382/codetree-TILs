@@ -12,17 +12,18 @@ for _ in range(k):
 # functions
 
 # 골렘 이동
-def move(g, dir):
+def movable(g, dir):
     for x, y in g:
         nx = x + dx[dir]
         ny = y + dy[dir]
         if nx < 0 or nx >= r + 3 or ny < 0 or ny >= c or graph[nx][ny][0]:
             return False
+    return True
 
+def move(g, dir):
     for i in range(5):
         g[i][0] += dx[dir]
         g[i][1] += dy[dir]
-    return True
 
 # 그래프에 위치 기록
 def paint(g, exit):
@@ -62,11 +63,12 @@ def golem_move(x, y, exit):
     global cnt, golem_cnt, graph
 
     g = [[x-1,y], [x, y+1], [x+1, y], [x,y-1], [x,y]]
-    
+    end = False
     # 아래로 무한 이동
     while True:
-        if not move(g, down):
+        if not movable(g, down):
             break
+        move(g, down)
     
     # 최남단에 닿았을 때
     if g[2][0] == r + 2:
@@ -75,22 +77,35 @@ def golem_move(x, y, exit):
         return 
     
     # 왼쪽으로 이동
-    while True:
-        if not move(g, left):
+    while True:        
+        if not movable(g, left):
+            break
+        move(g, left)
+
+        if not movable(g, down):
+            move(g, right)
             break
         exit = (exit + 3) % 4
+
         while True:
-            if not move(g, down):
+            if not movable(g, down):
                 break
+            move(g, down)
 
     # 오른쪽으로 이동
     while True:
-        if not move(g, right):
+        if not movable(g, right):
+            break
+        move(g, right)
+
+        if not movable(g,down):
+            move(g, left)
             break
         exit = (exit + 1) % 4
         while True:
-            if not move(g, down):
+            if not movable(g, down):
                 break
+            move(g, down)
     
     # 이동이 끝나도 모든 x좌표중 3 미만인 게 있다면 전체 초기화
     for x, y in g:
